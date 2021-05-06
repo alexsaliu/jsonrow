@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react'
+import {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 
 const App = () => {
@@ -11,41 +11,33 @@ const App = () => {
 		"test3": {
 			"testDeep": "ok"
 		},
-		"test4": [1, true, "hi"]
+		"test4": [1, true, "hi", [1, {"ok": {"ok": 2}}]]
 	}`)
+
+	const jsonRef = useRef(null)
 
 	useEffect(() => {
 		console.log(JSON.parse(json))
-		setJson(formatJson(JSON.parse(json)))
-		console.log(formatJson(JSON.parse(json)))
+		setJson(JSON.parse(json))
+		// setJson(formatJson(JSON.parse(json)))
+		console.log(json)
 	}, [])
 
-	// if object
-		// add key
-		// check type, add value
-
-	// if array
-		// check type add value
-
 	const formatJson = (json, level=0) => {
-		let formattedJson = ''
+		let formattedJson = !level ? '<div>' : ''
 		if (Array.isArray(json)) {
-			formattedJson += '[\n' + indentation(level++)
-			console.log(level);
-			
-			for (const item in json) {
-				formattedJson += formatValue(item) + ',\n'
+			formattedJson += '[<div>'
+			for (const item of json) {
+				formattedJson += '<div>' + indentation(level + 2) + formatValue(item, level + 2)
 			}
-			formattedJson += ']'
+			formattedJson += '<div>' + indentation(level) + ']</div>'
 		}
 		else if (typeof json === 'object') {
-			formattedJson += '{\n' + indentation(level++)
-			console.log(level);
+			formattedJson += '{</div>'
 			for (const key in json) {
-				formattedJson += `"${key}": `
-				formattedJson += formatValue(json[key]) + ',\n'
+				formattedJson += `<div>${indentation(level + 2)}<span style="color:green">"${key}"</span>: ${formatValue(json[key], level + 2)}`
 			}
-			formattedJson += '}'
+			formattedJson += `<div>${indentation(level)}}</div>`
 		}
 		else {
 			return 'not valid json'
@@ -61,10 +53,11 @@ const App = () => {
 		return spaces
 	}
 
-	const formatValue = (value) => {
-		if (typeof value === 'string') return `"${value}"`
-		if (typeof value === 'number' || typeof value === 'boolean') return value
-		if (typeof value === 'object' || Array.isArray(value)) return formatJson(value)
+	const formatValue = (value, level) => {
+		if (typeof value === 'string') return `<span style="color:red">"${value}"</span>,</div>`
+		if (typeof value === 'number') return `<span style="color:blue">${value}</span>,</div>`
+		if (typeof value === 'boolean') return `<span style="color:purple">${value}</span>,</div>`
+		if (typeof value === 'object' || Array.isArray(value)) return formatJson(value, level)
 	}
 
 	const generateKey = async () => {
@@ -88,10 +81,9 @@ const App = () => {
 		setJson(JSON.stringify(res.data.data))
 	}
 
-	const copyToClipboard = () => {
-		let str = apiKey
+	const copyToClipboard = (text) => {
 		function listener(e) {
-		e.clipboardData.setData("text/plain", str)
+		e.clipboardData.setData("text/html", text)
 		e.preventDefault()
 		}
 		document.addEventListener("copy", listener)
@@ -99,15 +91,36 @@ const App = () => {
 		document.removeEventListener("copy", listener)
 	}
 
+	function CopyToClipboard(element) {
+		if (document.selection) {
+		  var range = document.body.createTextRange();
+		  range.moveToElementText(element);
+		  range.select().createTextRange();
+		  document.execCommand("copy");
+		} else if (window.getSelection) {
+		  var range = document.createRange();
+		  range.selectNode(element);
+		  window.getSelection().addRange(range);
+		  document.execCommand("copy");
+		  alert("Text has been copied, now paste in the text-area")
+		}
+	  }
+
 	return (
 		<div className="App">
 			JSONrow
 			<button onClick={() => generateKey()}>Generate Key</button>
-			<div onClick={() => copyToClipboard()}>{apiKey}</div>
+			<div onClick={() => copyToClipboard(apiKey)}>{apiKey}</div>
 			<textarea onChange={(e) => setText(e.target.value)} placeholder='{"test": "test"}'></textarea>
 			<button onClick={() => sendJson()}>Send JSON</button>
 			<button onClick={() => getJson()}>Get JSON</button>
-			<textarea value={json}></textarea>
+			<div ref={jsonRef} dangerouslySetInnerHTML={{__html: json}}></div>
+			<button onClick={() => CopyToClipboard(jsonRef.current)}>Copy</button>
+			<pre>
+				<code>
+					{JSON.stringify(json, null, 4)}
+				</code>
+			</pre>
 		</div>
 	)
 }
