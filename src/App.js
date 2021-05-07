@@ -4,7 +4,7 @@ import axios from 'axios'
 const App = () => {
 	const [apiKey, setApiKey] = useState('')
 	const [text, setText] = useState('{"test": "test"}')
-	const [json, setJson] = useState(`{
+	const [json, setJson] = useState({
 		"test": "hi",
 		"test1": 1,
 		"test2": true,
@@ -12,18 +12,22 @@ const App = () => {
 			"testDeep": "ok"
 		},
 		"test4": [1, true, "hi", [1, {"ok": {"ok": 2}}]]
-	}`)
+	})
+	const [formattedJson, setFormattedJson] = useState({})
 
 	const jsonRef = useRef(null)
 
 	useEffect(() => {
-		console.log(JSON.parse(json))
-		setJson(JSON.parse(json))
-		// setJson(formatJson(JSON.parse(json)))
 		console.log(json)
+		console.log(formattedJson)
 	}, [])
 
-	const formatJson = (json, level=0) => {
+	useEffect(() => {
+		console.log("OK");
+		setFormattedJson(formatJsonAsHtml(json))
+	}, [json])
+
+	const formatJsonAsHtml = (json, level=0) => {
 		let formattedJson = !level ? '<div>' : ''
 		if (Array.isArray(json)) {
 			formattedJson += '[<div>'
@@ -38,9 +42,6 @@ const App = () => {
 				formattedJson += `<div>${indentation(level + 2)}<span style="color:green">"${key}"</span>: ${formatValue(json[key], level + 2)}`
 			}
 			formattedJson += `<div>${indentation(level)}}</div>`
-		}
-		else {
-			return 'not valid json'
 		}
 		return formattedJson
 	}
@@ -57,67 +58,58 @@ const App = () => {
 		if (typeof value === 'string') return `<span style="color:red">"${value}"</span>,</div>`
 		if (typeof value === 'number') return `<span style="color:blue">${value}</span>,</div>`
 		if (typeof value === 'boolean') return `<span style="color:purple">${value}</span>,</div>`
-		if (typeof value === 'object' || Array.isArray(value)) return formatJson(value, level)
+		if (typeof value === 'object' || Array.isArray(value)) return formatJsonAsHtml(value, level)
 	}
 
 	const generateKey = async () => {
-		const res = await axios.get('https://jsonrow-api.herokuapp.com/new')
+		// const res = await axios.get('https://jsonrow-api.herokuapp.com/new')
+		const res = await axios.get('http://localhost:3001/new')
 		console.log(res)
 		setApiKey(res.data.data)
 	}
 
 	const sendJson = async () => {
-		console.log();
-		
-		const res = await axios.post(`https://jsonrow-api.herokuapp.com/user/${apiKey}`, {
+		// const res = await axios.post(`https://jsonrow-api.herokuapp.com/user/${apiKey}`, {
+		// 	json: text
+		// })
+		console.log(text);
+		const res = await axios.post(`http://localhost:3001/user/${apiKey}`, {
 			json: text
 		})
 		console.log(res)
 	}
 
 	const getJson = async () => {
-		const res = await axios.get(`https://jsonrow-api.herokuapp.com/user/${apiKey}`)
+		// const res = await axios.get(`https://jsonrow-api.herokuapp.com/user/${apiKey}`)
+		const res = await axios.get(`http://localhost:3001/user/${apiKey}`)
 		console.log(res)
-		setJson(JSON.stringify(res.data.data))
+		setJson(res.data.data)
 	}
 
 	const copyToClipboard = (text) => {
+		console.log(text);
 		function listener(e) {
-		e.clipboardData.setData("text/html", text)
-		e.preventDefault()
+			e.clipboardData.setData("text/plain", text)
+			e.preventDefault()
 		}
 		document.addEventListener("copy", listener)
 		document.execCommand("copy")
 		document.removeEventListener("copy", listener)
 	}
 
-	function CopyToClipboard(element) {
-		if (document.selection) {
-		  var range = document.body.createTextRange();
-		  range.moveToElementText(element);
-		  range.select().createTextRange();
-		  document.execCommand("copy");
-		} else if (window.getSelection) {
-		  var range = document.createRange();
-		  range.selectNode(element);
-		  window.getSelection().addRange(range);
-		  document.execCommand("copy");
-		  alert("Text has been copied, now paste in the text-area")
-		}
-	  }
-
 	return (
 		<div className="App">
 			JSONrow
+			<input onChange={(e) => {setApiKey(e.target.value)}} value={apiKey} type="text" />
 			<button onClick={() => generateKey()}>Generate Key</button>
 			<div onClick={() => copyToClipboard(apiKey)}>{apiKey}</div>
 			<textarea onChange={(e) => setText(e.target.value)} placeholder='{"test": "test"}'></textarea>
 			<button onClick={() => sendJson()}>Send JSON</button>
 			<button onClick={() => getJson()}>Get JSON</button>
-			<div ref={jsonRef} dangerouslySetInnerHTML={{__html: json}}></div>
-			<button onClick={() => CopyToClipboard(jsonRef.current)}>Copy</button>
-			<pre>
-				<code>
+			<div className="formatted_json" dangerouslySetInnerHTML={{__html: formattedJson}}></div>
+			<button onClick={() => copyToClipboard(jsonRef.current.innerHTML)}>Copy</button>
+			<pre hidden>
+				<code ref={jsonRef}>
 					{JSON.stringify(json, null, 4)}
 				</code>
 			</pre>
