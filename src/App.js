@@ -7,13 +7,13 @@ const App = () => {
 	const [apiKey, setApiKey] = useState('')
 	const [text, setText] = useState('{"test": "test"}')
 	const [json, setJson] = useState({
-		"test": "hi",
+		"test": "hi there friend",
 		"test1": 1,
 		"test2": true,
 		"test3": {
 			"testDeep": "ok"
 		},
-		"test4": [1, true, "hi", [1, {"ok": {"ok": 2}}]]
+		"test4": [1, true, false, "hi", [1235, {"ok": {"ok": 232}}, false]]
 	})
 	const [formattedJson, setFormattedJson] = useState({})
 
@@ -50,15 +50,32 @@ const App = () => {
 
 	return (
 		<div className="App">
-			JSONrow
-			<input onChange={(e) => {setApiKey(e.target.value)}} value={apiKey} type="text" />
-			<button onClick={() => generateKey()}>Generate Key</button>
-			<div onClick={() => copyToClipboard(apiKey)}>{apiKey}</div>
-			<textarea onChange={(e) => setText(e.target.value)} placeholder='{"test": "test"}'></textarea>
-			<button onClick={() => sendJson()}>Send JSON</button>
-			<button onClick={() => getJson()}>Get JSON</button>
-			<div className="formatted_json" dangerouslySetInnerHTML={{__html: formattedJson}}></div>
-			<button onClick={() => copyToClipboard(jsonRef.current.innerHTML)}>Copy</button>
+			<div className="content">
+				<h1 className="title">JSONrow</h1>
+				<h4 className="tagline">An minamilist API to store and retrieve your JSON</h4>
+				<div className="input-container">
+					<input className="apikey-input" onChange={(e) => {setApiKey(e.target.value)}} value={apiKey} placeholder="Enter existing API key or generate" type="text" />
+					<button onClick={() => generateKey()}>Generate Key</button>
+				</div>
+
+				<div className="container">
+					<div>
+						<div className="formatted-json" dangerouslySetInnerHTML={{__html: formattedJson}}></div>
+						<div className="endpoint">GET  https://jsonrow.herokuapp.com/user/{apiKey ? apiKey : '{API key}'}</div>
+						<button onClick={() => getJson()}>Get JSON</button>
+					</div>
+
+					<div>
+						<textarea onChange={(e) => setText(e.target.value)} placeholder='{"test": "test"}'></textarea>
+						<div className="endpoint">GET  https://jsonrow.herokuapp.com/user/{apiKey ? apiKey : '{API key}'}</div>
+						<button onClick={() => sendJson()}>Send JSON</button>
+					</div>
+				</div>
+			</div>
+
+
+			{/* <button onClick={() => copyToClipboard(jsonRef.current.innerHTML)}>Copy</button> */}
+			{/* <div className="json-container" onClick={() => copyToClipboard(apiKey)}></div> */}
 			<pre hidden>
 				<code ref={jsonRef}>
 					{JSON.stringify(json, null, 4)}

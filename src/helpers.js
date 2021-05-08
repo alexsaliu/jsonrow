@@ -10,7 +10,7 @@ export const formatJsonAsHtml = (json, level=0) => {
     else if (typeof json === 'object') {
         formattedJson += '{</div>'
         for (const key in json) {
-            formattedJson += `<div>${indentation(level + 2)}<span style="color:green">"${key}"</span>: ${formatValue(json[key], level + 2)}`
+            formattedJson += `<div>${indentation(level + 2)}<span style="color:#a0e237">"${key}"</span>: ${formatValue(json[key], level + 2)}`
         }
         formattedJson += `<div>${indentation(level)}}</div>`
     }
@@ -26,9 +26,9 @@ const indentation = (amount) => {
 }
 
 const formatValue = (value, level) => {
-    if (typeof value === 'string') return `<span style="color:red">"${value}"</span>,</div>`
-    if (typeof value === 'number') return `<span style="color:blue">${value}</span>,</div>`
-    if (typeof value === 'boolean') return `<span style="color:purple">${value}</span>,</div>`
+    if (typeof value === 'string') return `<span style="color:#ffe030">"${value}"</span>,</div>`
+    if (typeof value === 'number') return `<span style="color:orange">${value}</span>,</div>`
+    if (typeof value === 'boolean') return `<span style="color:#e750ff">${value}</span>,</div>`
     if (typeof value === 'object' || Array.isArray(value)) return formatJsonAsHtml(value, level)
 }
 
