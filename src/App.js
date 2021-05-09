@@ -103,7 +103,7 @@ const App = () => {
 				<div className="container">
 					<div>
 						<div className="formatted-json" dangerouslySetInnerHTML={{__html: formattedJson}}></div>
-						<div className="copy">GET &nbsp; https://jsonrow.herokuapp.com/user/{apiKey ? apiKey : '{API key}'}</div>
+						<div className="copy">GET &nbsp; https://jsonrow-api.herokuapp.com/user/{apiKey ? apiKey : '{API key}'}</div>
 						<div className="copy" style={{color: '#ffffff'}}>-</div>
 						<div className="button-container">
 							<button onClick={() => handleRequest(2, getJson)}>Get JSON</button>
@@ -116,7 +116,7 @@ const App = () => {
 
 					<div>
 						<textarea onChange={(e) => setText(e.target.value)} placeholder='{"test": "test"}'></textarea>
-						<div className="copy">POST &nbsp; https://jsonrow.herokuapp.com/user/{apiKey ? apiKey : '{API key}'}</div>
+						<div className="copy">POST &nbsp; https://jsonrow-api.herokuapp.com/user/{apiKey ? apiKey : '{API key}'}</div>
 						<div className="copy">Body &nbsp; {'{'}your json{'}'}</div>
 						<div className="button-container">
 							<button onClick={() => handleRequest(3, sendJson)}>Send JSON</button>
