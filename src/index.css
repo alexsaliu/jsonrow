@@ -50,8 +50,10 @@ button {
 
 .input-container {
     display: flex;
-    margin: 4rem 0;
+    margin-top: 4rem;
     justify-content: space-between;
+    align-items: center;
+    position: relative;
 }
 
 ::placeholder {
@@ -60,7 +62,7 @@ button {
 
 .apikey-input {
     height: 3rem;
-    padding: 0 0 0 0.5rem;
+    padding: 0 0 0 1rem;
     border: 1px solid var(--light-grey);
     border-radius: 0.2rem;
     width: calc(100% - 11rem);
@@ -76,27 +78,32 @@ button {
     justify-content: center;
 }
 .content {
-    width: 1000px;
+    width: 68rem;
 }
 .formatted-json * {
     font-family: monospace;
     color: #5ba8ff;
 }
 .container {
+    margin-top: 4rem;
     display: flex;
     justify-content: space-between;
 }
 .container > div {
     width: 47.5%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 .container > div:first-child {
     margin-right: 2rem;
 }
 .formatted-json {
     background: #1B1F22;
+    overflow: auto;
 }
 .formatted-json, textarea {
-    height: 400px;
+    height: 26rem;
     width: 100%;
     padding: 0.5rem;
     border-radius: 0.2rem;
@@ -104,7 +111,60 @@ button {
 textarea {
     border: 1px solid var(--light-grey);
 }
-.endpoint {
+.copy {
     font-size: 0.8rem;
-    margin: 0.5rem 0 1rem;
+    margin-top: 0.5rem;
+}
+.error {
+    color: red;
+}
+.success {
+    color: var(--green);
+}
+.loader1 {
+    position: absolute;
+    right: 11.7rem;
+}
+.loader2, .loader3 {
+    margin-left: 0.6rem;
+}
+.button-container {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+
+.loader {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--green) , transparent 80%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.loader div {
+    width: 1.8rem;
+    height: 1.8rem;
+    background: white;
+    border-radius: 50%;
+}
+
+.bracket-loader {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--green);
+    font-size: 1.2rem;
+    padding-bottom: 0.3rem;
+    animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+    from {transform: rotate(0deg)}
+    to {transform: rotate(360deg)}
 }
