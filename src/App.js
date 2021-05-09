@@ -58,6 +58,7 @@ const App = () => {
 	}
 
 	const sendJson = async () => {
+		console.log(text);
 		const json = isJsonString(text)
 		if (!json) {
 			setError({'number': 3, 'message': 'Not Valid JSON'})
