@@ -79,6 +79,7 @@ button {
 }
 .content {
     width: 68rem;
+    margin-bottom: 4rem;
 }
 .formatted-json * {
     font-family: monospace;
