@@ -87,7 +87,7 @@ const App = () => {
 		<div className="App">
 			<div className="content">
 				<h1 className="title">JSONrow</h1>
-				<h4 className="tagline">An minamilist API to store and retrieve your JSON</h4>
+				<h4 className="tagline">An minimalist API to store and retrieve your JSON</h4>
 				<div className="input-container">
 					<input className="apikey-input" onChange={(e) => {setApiKey(e.target.value)}} value={apiKey} placeholder="Enter existing API key or generate" type="text" />
 					<button onClick={() => handleRequest(1, generateKey)}>Generate Key</button>
