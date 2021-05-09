@@ -2,7 +2,7 @@ import {useState, useEffect, useRef} from 'react'
 import axios from 'axios'
 
 import BracketLoader from './BracketLoader.js'
-import { formatJsonAsHtml, copyToClipboard } from './helpers.js'
+import { formatJsonAsHtml, copyToClipboard, isJsonString } from './helpers.js'
 const API = process.env.REACT_APP_API
 
 const App = () => {
@@ -45,8 +45,8 @@ const App = () => {
 	const getJson = async () => {
 		try {
 			const res = await axios.get(`${API}/user/${apiKey}`)
-			console.log(res.data.json)
-			setJson(res.data.json)
+			console.log(res.data.data)
+			setJson(res.data.data)
 			setError({'number': 0, 'message': ''})
 		}
 		catch(e) {
@@ -58,11 +58,14 @@ const App = () => {
 	}
 
 	const sendJson = async () => {
+		const json = isJsonString(text)
+		if (!json) {
+			setError({'number': 3, 'message': 'Not Valid JSON'})
+			return
+		}
 		try {
-			const res = await axios.post(`${API}/user/${apiKey}`, {
-				json: text
-			})
-			console.log(res.data.json)
+			const res = await axios.post(`${API}/user/${apiKey}`, json)
+			console.log(res.data.data)
 			setError({'number': 0, 'message': ''})
 			setSuccess(true)
 		}
@@ -114,7 +117,7 @@ const App = () => {
 					<div>
 						<textarea onChange={(e) => setText(e.target.value)} placeholder='{"test": "test"}'></textarea>
 						<div className="copy">POST &nbsp; https://jsonrow.herokuapp.com/user/{apiKey ? apiKey : '{API key}'}</div>
-						<div className="copy">Body &nbsp; {'{'}json: <span style={{color: "var(--green)"}}>{'{'}your json{'}'}</span>{'}'}</div>
+						<div className="copy">Body &nbsp; {'{'}your json{'}'}</div>
 						<div className="button-container">
 							<button onClick={() => handleRequest(3, sendJson)}>Send JSON</button>
 							{ processingRequest === 3 ? <div className="loader3">

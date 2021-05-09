@@ -41,3 +41,14 @@ export const copyToClipboard = (text) => {
     document.execCommand("copy")
     document.removeEventListener("copy", listener)
 }
+
+export const isJsonString = (str) => {
+    try {
+        const json = JSON.parse(str)
+		return json
+    }
+	catch (e) {
+        return false
+    }
+    return true
+}
