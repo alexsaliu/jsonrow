@@ -27,6 +27,20 @@ const App = () => {
 		setProcessingRequest(0)
 	}
 
+	const validateApiKey = (apiKey, errorNumber) => {
+		if (!apiKey) {
+			setError({'number': errorNumber, 'message': 'Must enter API key'})
+			return false
+		}
+		else if (apiKey.length < 30) {
+			setError({'number': errorNumber, 'message': 'Invalid API key'})
+			return false
+		}
+		else {
+			return true
+		}
+	}
+
 	const generateKey = async () => {
 		try {
 			const res = await axios.get(`${API}/new`)
@@ -43,8 +57,13 @@ const App = () => {
 	}
 
 	const getJson = async () => {
+		if (!validateApiKey(apiKey, 2)) return
 		try {
 			const res = await axios.get(`${API}/user/${apiKey}`)
+			if (!res.data.data) {
+				setError({'number': 2, 'message': 'No JSON stored yet'})
+				return
+			}
 			console.log(res.data.data)
 			setJson(res.data.data)
 			setError({'number': 0, 'message': ''})
@@ -58,7 +77,7 @@ const App = () => {
 	}
 
 	const sendJson = async () => {
-		console.log(text);
+		if (!validateApiKey(apiKey, 3)) return
 		const json = isJsonString(text)
 		if (!json) {
 			setError({'number': 3, 'message': 'Not Valid JSON'})
